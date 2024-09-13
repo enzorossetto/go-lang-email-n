@@ -16,7 +16,17 @@ func main() {
 	} else {
 		validationErrors := err.(validator.ValidationErrors)
 		for _, v := range validationErrors {
-			println(v.Error())
+
+			switch v.Tag() {
+			case "required":
+				println(v.StructField() + " is required")
+			case "min":
+				println(v.StructField() + " is less than the minimum: " + v.Param())
+			case "max":
+				println(v.StructField() + " is greater than the maximum: " + v.Param())
+			case "email":
+				println(v.StructField() + " is not a valid email")
+			}
 		}
 	}
 }

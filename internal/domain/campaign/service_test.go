@@ -22,15 +22,15 @@ func (s *repositoryMock) Save(campaign *Campaign) error {
 var (
 	newCampaign = contract.NewCampaign{
 		Name:    "Test Y",
-		Content: "Body",
+		Content: "Content",
 		Emails:  []string{"test@mail.com"},
 	}
-	repository = new(repositoryMock)
-	service    = Service{Repository: repository}
 )
 
 func Test_CreateCampaign(t *testing.T) {
 	assert := assert.New(t)
+	repository := new(repositoryMock)
+	service := Service{Repository: repository}
 	repository.On("Save", mock.Anything).Return(nil)
 
 	id, err := service.Create(newCampaign)
@@ -41,16 +41,19 @@ func Test_CreateCampaign(t *testing.T) {
 
 func Test_ValidateDomainError(t *testing.T) {
 	assert := assert.New(t)
-	newCampaign.Name = ""
+	repository := new(repositoryMock)
+	service := Service{Repository: repository}
 	repository.On("Save", mock.Anything).Return(nil)
 
-	_, err := service.Create(newCampaign)
+	_, err := service.Create(contract.NewCampaign{})
 
 	assert.NotNil(err)
-	assert.Equal("name is required", err.Error())
+	assert.False(errors.Is(err, internalerrors.ErrInternal))
 }
 
 func Test_SaveCampaign(t *testing.T) {
+	repository := new(repositoryMock)
+	service := Service{Repository: repository}
 	repository.On("Save", mock.MatchedBy(func(campaign *Campaign) bool {
 		return campaign.Name == newCampaign.Name && campaign.Content == newCampaign.Content && len(campaign.Contacts) == len(newCampaign.Emails)
 	})).Return(nil)
@@ -62,6 +65,8 @@ func Test_SaveCampaign(t *testing.T) {
 
 func Test_ValidateRepositorySave(t *testing.T) {
 	assert := assert.New(t)
+	repository := new(repositoryMock)
+	service := Service{Repository: repository}
 	repository.On("Save", mock.Anything).Return(errors.New("error to save on database"))
 
 	_, err := service.Create(newCampaign)

@@ -25,3 +25,14 @@ func (s *Service) Create(newCampaign contract.NewCampaign) (string, error) {
 
 	return campaign.ID, nil
 }
+
+func (s *Service) List() ([]Campaign, error) {
+
+	list, err := s.Repository.Get()
+
+	if err != nil {
+		return []Campaign{}, internalerrors.ErrInternal
+	}
+
+	return list, nil
+}

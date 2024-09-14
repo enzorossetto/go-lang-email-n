@@ -1,21 +1,21 @@
 package main
 
 import (
-	"emailn/internal/contract"
 	"emailn/internal/domain/campaign"
+	"emailn/internal/endpoints"
 	"emailn/internal/infrastructure/database"
-	internalerrors "emailn/internal/internal-errors"
-	"errors"
 	"net/http"
 
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/render"
 )
 
 func main() {
-	service := campaign.Service{
+	campaignService := campaign.Service{
 		Repository: &database.CampaignRepository{},
+	}
+	handler := endpoints.Handler{
+		CampaignService: campaignService,
 	}
 
 	r := chi.NewRouter()
@@ -26,26 +26,8 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
-	r.Post("/campaigns", func(w http.ResponseWriter, r *http.Request) {
-		var request contract.NewCampaign
-		render.DecodeJSON(r.Body, &request)
-
-		id, err := service.Create(request)
-
-		if err != nil {
-			if errors.Is(err, internalerrors.ErrInternal) {
-				render.Status(r, 500)
-			} else {
-				render.Status(r, 400)
-			}
-
-			render.JSON(w, r, map[string]interface{}{"error": err.Error()})
-			return
-		}
-
-		render.Status(r, 201)
-		render.JSON(w, r, map[string]interface{}{"id": id})
-	})
+	r.Post("/campaigns", endpoints.ErrorHandler(handler.CampaignPost))
+	r.Get("/campaigns", endpoints.ErrorHandler(handler.CampaignGet))
 
 	http.ListenAndServe(":3000", r)
 }

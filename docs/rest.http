@@ -5,3 +5,7 @@ POST http://localhost:3000/campaigns
     "content": "New account",
     "emails": ["test@mail.com"]
 }
+
+###
+
+GET http://localhost:3000/campaigns

@@ -15,7 +15,7 @@ func main() {
 		Repository: &database.CampaignRepository{},
 	}
 	handler := endpoints.Handler{
-		CampaignService: campaignService,
+		CampaignService: &campaignService,
 	}
 
 	r := chi.NewRouter()

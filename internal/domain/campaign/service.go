@@ -5,6 +5,11 @@ import (
 	internalerrors "emailn/internal/internal-errors"
 )
 
+type CampaignService interface {
+	Create(newCampaign contract.NewCampaign) (string, error)
+	List() ([]Campaign, error)
+}
+
 type Service struct {
 	Repository Repository
 }

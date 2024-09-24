@@ -23,9 +23,14 @@ func (s *serviceMock) Create(newCampaign contract.NewCampaign) (string, error) {
 	return args.String(0), args.Error(1)
 }
 
-func (s *serviceMock) List() ([]campaign.Campaign, error) {
+func (s *serviceMock) Get() ([]campaign.Campaign, error) {
 	args := s.Called()
 	return args.Get(0).([]campaign.Campaign), args.Error(1)
+}
+
+func (s *serviceMock) GetBy(id string) (*contract.CampaignResponse, error) {
+	args := s.Called(id)
+	return args.Get(0).(*contract.CampaignResponse), args.Error(1)
 }
 
 func Test_CampaignPost_should_save_new_campaign(t *testing.T) {

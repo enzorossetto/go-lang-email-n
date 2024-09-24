@@ -95,5 +95,5 @@ func Test_NewCampaign_MustCreateWithStatusPending(t *testing.T) {
 
 	campaign, _ := NewCampaign(name, content, emails)
 
-	assert.Equal(Status(Pending), campaign.Status)
+	assert.Equal(Pending, campaign.Status)
 }

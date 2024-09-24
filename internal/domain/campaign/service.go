@@ -7,7 +7,8 @@ import (
 
 type CampaignService interface {
 	Create(newCampaign contract.NewCampaign) (string, error)
-	List() ([]Campaign, error)
+	Get() ([]Campaign, error)
+	GetBy(id string) (*contract.CampaignResponse, error)
 }
 
 type Service struct {
@@ -31,7 +32,7 @@ func (s *Service) Create(newCampaign contract.NewCampaign) (string, error) {
 	return campaign.ID, nil
 }
 
-func (s *Service) List() ([]Campaign, error) {
+func (s *Service) Get() ([]Campaign, error) {
 
 	list, err := s.Repository.Get()
 
@@ -40,4 +41,19 @@ func (s *Service) List() ([]Campaign, error) {
 	}
 
 	return list, nil
+}
+
+func (s *Service) GetBy(id string) (*contract.CampaignResponse, error) {
+	campaign, err := s.Repository.GetBy(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &contract.CampaignResponse{
+		ID:      campaign.ID,
+		Name:    campaign.Name,
+		Status:  campaign.Status,
+		Content: campaign.Content,
+	}, nil
 }

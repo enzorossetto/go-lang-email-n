@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func (h *Handler) CampaignGetBy(w http.ResponseWriter, r *http.Request) (interface{}, int, error) {
+func (h *Handler) CampaignGetById(w http.ResponseWriter, r *http.Request) (interface{}, int, error) {
 
 	id := r.PathValue("id")
 

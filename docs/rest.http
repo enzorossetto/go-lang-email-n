@@ -1,9 +1,9 @@
 POST http://localhost:3000/campaigns
 
 {
-    "name": "Teste campaign 2",
-    "content": "New account 2",
-    "emails": ["test2@mail.com"]
+    "name": "Teste campaign",
+    "content": "New account",
+    "emails": ["test@mail.com"]
 }
 
 ###
@@ -12,4 +12,4 @@ GET http://localhost:3000/campaigns
 
 ###
 
-GET http://localhost:3000/campaigns/:ID
+GET http://localhost:3000/campaign/:ID

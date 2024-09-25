@@ -21,12 +21,18 @@ func (s *repositoryMock) Save(campaign *Campaign) error {
 
 func (s *repositoryMock) Get() ([]Campaign, error) {
 	args := s.Called()
+	if args.Get(1) != nil {
+		return nil, args.Error(1)
+	}
 	return args.Get(0).([]Campaign), args.Error(1)
 }
 
 func (s *repositoryMock) GetBy(id string) (*Campaign, error) {
 	args := s.Called(id)
-	return args.Get(0).(*Campaign), args.Error(1)
+	if args.Get(1) != nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*Campaign), nil
 }
 
 var (
@@ -100,7 +106,7 @@ func Test_GetCampaign_ValidateDomainError(t *testing.T) {
 	assert := assert.New(t)
 	repository := new(repositoryMock)
 	service := Service{Repository: repository}
-	repository.On("Get").Return([]Campaign{}, errors.New("mock error"))
+	repository.On("Get").Return(nil, errors.New("mock error"))
 
 	_, err := service.Get()
 
@@ -124,7 +130,7 @@ func Test_GetCampaignBy_ValidateDomainError(t *testing.T) {
 	assert := assert.New(t)
 	repository := new(repositoryMock)
 	service := Service{Repository: repository}
-	repository.On("GetBy", mock.Anything).Return(&Campaign{}, errors.New("mock error"))
+	repository.On("GetBy", mock.Anything).Return(nil, errors.New("mock error"))
 
 	_, err := service.GetBy("id")
 
@@ -132,20 +138,16 @@ func Test_GetCampaignBy_ValidateDomainError(t *testing.T) {
 	assert.Equal(internalerrors.ErrInternal, err)
 }
 
-func Test_GetCampaignBy_GetBy(t *testing.T) {
-	campaign := Campaign{
-		ID:       "id",
-		Name:     "Test Y",
-		Content:  "Content",
-		Status:   "status",
-		Contacts: []Contact{{Email: "example@mail.com"}},
-	}
+func Test_GetCampaignBy_ReturnsCampaign(t *testing.T) {
+	campaign, _ := NewCampaign(newCampaign.Name, newCampaign.Content, newCampaign.Emails)
 	assert := assert.New(t)
 	repository := new(repositoryMock)
 	service := Service{Repository: repository}
-	repository.On("GetBy", mock.Anything).Return(&campaign, nil)
+	repository.On("GetBy", mock.MatchedBy(func(id string) bool {
+		return id == campaign.ID
+	})).Return(campaign, nil)
 
-	campaignResponse, _ := service.GetBy("id")
+	campaignResponse, _ := service.GetBy(campaign.ID)
 
 	assert.Equal(campaign.ID, campaignResponse.ID)
 	assert.Equal(newCampaign.Name, campaignResponse.Name)

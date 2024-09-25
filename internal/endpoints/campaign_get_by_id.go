@@ -4,16 +4,12 @@ import (
 	internalerrors "emailn/internal/internal-errors"
 	"errors"
 	"net/http"
+
+	"github.com/go-chi/chi/v5"
 )
 
 func (h *Handler) CampaignGetById(w http.ResponseWriter, r *http.Request) (interface{}, int, error) {
-
-	id := r.PathValue("id")
-
-	if id == "" {
-		return nil, 400, errors.New("id is required")
-	}
-
+	id := chi.URLParam(r, "id")
 	campaign, err := h.CampaignService.GetBy(id)
 
 	if err != nil {
@@ -24,5 +20,5 @@ func (h *Handler) CampaignGetById(w http.ResponseWriter, r *http.Request) (inter
 		}
 	}
 
-	return map[string]interface{}{"campaign": campaign}, 200, nil
+	return campaign, 200, nil
 }

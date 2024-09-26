@@ -11,8 +11,9 @@ import (
 )
 
 func main() {
+	db := database.NewDb()
 	campaignService := campaign.Service{
-		Repository: &database.CampaignRepository{},
+		Repository: &database.CampaignRepository{Db: db},
 	}
 	handler := endpoints.Handler{
 		CampaignService: &campaignService,

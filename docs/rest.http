@@ -12,4 +12,8 @@ GET http://localhost:3000/campaigns
 
 ###
 
-GET http://localhost:3000/campaign/:ID
+GET http://localhost:3000/campaigns/:ID
+
+###
+
+PATCH http://localhost:3000/campaigns/cancel/:ID

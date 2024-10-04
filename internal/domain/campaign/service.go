@@ -11,6 +11,7 @@ type CampaignService interface {
 	Get() ([]Campaign, error)
 	GetBy(id string) (*contract.CampaignResponse, error)
 	Cancel(id string) error
+	Delete(id string) error
 }
 
 type Service struct {
@@ -25,7 +26,7 @@ func (s *Service) Create(newCampaign contract.NewCampaign) (string, error) {
 		return "", err
 	}
 
-	err = s.Repository.Save(campaign)
+	err = s.Repository.Create(campaign)
 
 	if err != nil {
 		return "", internalerrors.ErrInternal
@@ -73,7 +74,27 @@ func (s *Service) Cancel(id string) error {
 
 	campaign.Cancel()
 
-	err = s.Repository.Save(campaign)
+	err = s.Repository.Update(campaign)
+
+	if err != nil {
+		return internalerrors.ErrInternal
+	}
+
+	return nil
+}
+
+func (s *Service) Delete(id string) error {
+	campaign, err := s.Repository.GetBy(id)
+
+	if err != nil {
+		return internalerrors.ErrInternal
+	}
+
+	if campaign == nil {
+		return errors.New("campaign not found")
+	}
+
+	err = s.Repository.Delete(campaign)
 
 	if err != nil {
 		return internalerrors.ErrInternal

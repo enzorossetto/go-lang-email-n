@@ -34,3 +34,7 @@ func (cs *CampaignServiceMock) GetBy(id string) (*contract.CampaignResponse, err
 func (cs *CampaignServiceMock) Cancel(id string) error {
 	return nil
 }
+
+func (cs *CampaignServiceMock) Delete(id string) error {
+	return nil
+}

@@ -10,7 +10,6 @@ type CampaignService interface {
 	Create(newCampaign contract.NewCampaign) (string, error)
 	Get() ([]Campaign, error)
 	GetBy(id string) (*contract.CampaignResponse, error)
-	Cancel(id string) error
 	Delete(id string) error
 }
 
@@ -60,28 +59,6 @@ func (s *Service) GetBy(id string) (*contract.CampaignResponse, error) {
 		Content:              campaign.Content,
 		AmountOfEmailsToSend: len(campaign.Contacts),
 	}, nil
-}
-
-func (s *Service) Cancel(id string) error {
-	campaign, err := s.Repository.GetBy(id)
-
-	if err != nil {
-		return internalerrors.ProcessErrorToReturn(err)
-	}
-
-	if campaign.Status != Pending {
-		return errors.New("cannot cancel a campaign that is not pending")
-	}
-
-	campaign.Cancel()
-
-	err = s.Repository.Update(campaign)
-
-	if err != nil {
-		return internalerrors.ErrInternal
-	}
-
-	return nil
 }
 
 func (s *Service) Delete(id string) error {

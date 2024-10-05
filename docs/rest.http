@@ -2,7 +2,7 @@ POST http://localhost:3000/campaigns
 
 {
     "name": "Teste campaign",
-    "content": "New account",
+    "content": "Test content",
     "emails": ["test@mail.com"]
 }
 

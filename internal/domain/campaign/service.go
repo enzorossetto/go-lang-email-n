@@ -54,10 +54,11 @@ func (s *Service) GetBy(id string) (*contract.CampaignResponse, error) {
 	}
 
 	return &contract.CampaignResponse{
-		ID:      campaign.ID,
-		Name:    campaign.Name,
-		Status:  campaign.Status,
-		Content: campaign.Content,
+		ID:                   campaign.ID,
+		Name:                 campaign.Name,
+		Status:               campaign.Status,
+		Content:              campaign.Content,
+		AmountOfEmailsToSend: len(campaign.Contacts),
 	}, nil
 }
 
@@ -90,8 +91,8 @@ func (s *Service) Delete(id string) error {
 		return internalerrors.ErrInternal
 	}
 
-	if campaign == nil {
-		return errors.New("campaign not found")
+	if campaign.Status != Pending {
+		return errors.New("cannot delete a campaign that is not pending")
 	}
 
 	err = s.Repository.Delete(campaign)

@@ -4,7 +4,7 @@ import (
 	"emailn/internal/contract"
 	"emailn/internal/domain/campaign"
 	internalerrors "emailn/internal/internal-errors"
-	internalmock "emailn/internal/test/mock"
+	internalmock "emailn/internal/test/internal-mock"
 	"errors"
 	"testing"
 

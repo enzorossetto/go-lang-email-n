@@ -26,6 +26,7 @@ func main() {
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+	r.Use(endpoints.Auth)
 
 	r.Post("/campaigns", endpoints.ErrorHandler(handler.CampaignPost))
 	r.Get("/campaigns", endpoints.ErrorHandler(handler.CampaignGet))

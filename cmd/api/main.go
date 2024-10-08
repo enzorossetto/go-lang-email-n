@@ -26,12 +26,19 @@ func main() {
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
-	r.Use(endpoints.Auth)
 
-	r.Post("/campaigns", endpoints.ErrorHandler(handler.CampaignPost))
-	r.Get("/campaigns", endpoints.ErrorHandler(handler.CampaignGet))
-	r.Get("/campaigns/{id}", endpoints.ErrorHandler(handler.CampaignGetById))
-	r.Delete("/campaigns/{id}", endpoints.ErrorHandler(handler.CampaignDelete))
+	r.Get("/ping", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("pong"))
+	})
+
+	r.Route("/campaigns", func(r chi.Router) {
+		r.Use(endpoints.Auth)
+
+		r.Post("/", endpoints.ErrorHandler(handler.CampaignPost))
+		r.Get("/", endpoints.ErrorHandler(handler.CampaignGet))
+		r.Get("/{id}", endpoints.ErrorHandler(handler.CampaignGetById))
+		r.Delete("/{id}", endpoints.ErrorHandler(handler.CampaignDelete))
+	})
 
 	http.ListenAndServe(":3000", r)
 }

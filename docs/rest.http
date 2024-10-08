@@ -1,9 +1,17 @@
-GET http://localhost:3000/ping
+@url = http://localhost:3000
+@identity_provider = http://localhost:8080
+@username = USER_EMAIL
+@password = USER_PASSWORD
+@access_token = {{token.response.body.access_token}}
 
 ###
 
-POST http://localhost:3000/campaigns
-Authorization: Bearer TOKEN
+GET {{url}}/ping
+
+###
+
+POST {{url}}/campaigns
+Authorization: Bearer {{access_token}}
 
 {
     "name": "Teste campaign",
@@ -13,22 +21,22 @@ Authorization: Bearer TOKEN
 
 ###
 
-GET http://localhost:3000/campaigns
-Authorization: Bearer TOKEN
+GET {{url}}/campaigns
+Authorization: Bearer {{access_token}}
 
 ###
 
-GET http://localhost:3000/campaigns/:ID
-Authorization: Bearer TOKEN
+GET {{url}}/campaigns/:ID
+Authorization: Bearer {{access_token}}
 
 ###
 
-DELETE http://localhost:3000/campaigns/:ID
-Authorization: Bearer TOKEN
+DELETE {{url}}/campaigns/:ID
+Authorization: Bearer {{access_token}}
 
 ###
-
-POST http://localhost:8080/realms/emailn_provider/protocol/openid-connect/token
+# @name token
+POST {{identity_provider}}/realms/emailn_provider/protocol/openid-connect/token
 Content-Type: application/x-www-form-urlencoded
 
-client_id=emailn&username=USER_EMAIL&password=USER_PASSWORD&grant_type=password
+client_id=emailn&username={{username}}&password={{password}}&grant_type=password

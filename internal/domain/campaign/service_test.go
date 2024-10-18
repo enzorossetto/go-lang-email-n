@@ -15,9 +15,10 @@ import (
 
 var (
 	newCampaign = contract.NewCampaign{
-		Name:    "Test Y",
-		Content: "Content",
-		Emails:  []string{"test@mail.com"},
+		Name:      "Test Y",
+		Content:   "Content",
+		Emails:    []string{"test@mail.com"},
+		CreatedBy: "test@mail.com",
 	}
 )
 
@@ -118,7 +119,7 @@ func Test_GetCampaignBy_ValidateDomainError(t *testing.T) {
 
 func Test_GetCampaignBy_ReturnsCampaign(t *testing.T) {
 	assert := assert.New(t)
-	mockCampaign, _ := campaign.NewCampaign(newCampaign.Name, newCampaign.Content, newCampaign.Emails)
+	mockCampaign, _ := campaign.NewCampaign(newCampaign.Name, newCampaign.Content, newCampaign.Emails, newCampaign.CreatedBy)
 	repository := new(internalmock.RepositoryMock)
 	service := campaign.Service{Repository: repository}
 	repository.On("GetBy", mock.MatchedBy(func(id string) bool {
@@ -131,6 +132,7 @@ func Test_GetCampaignBy_ReturnsCampaign(t *testing.T) {
 	assert.Equal(newCampaign.Name, campaignResponse.Name)
 	assert.Equal(mockCampaign.Status, campaignResponse.Status)
 	assert.Equal(mockCampaign.Content, campaignResponse.Content)
+	assert.Equal(newCampaign.CreatedBy, campaignResponse.CreatedBy)
 }
 
 func Test_Delete_ReturnsRecordNotFound_when_campaign_does_not_exists(t *testing.T) {
@@ -159,7 +161,7 @@ func Test_Delete_ReturnsStatusInvalid_when_campaign_has_status_different_than_pe
 
 func Test_Delete_ReturnsInternalError_when_delete_has_a_problem(t *testing.T) {
 	assert := assert.New(t)
-	mockCampaign, _ := campaign.NewCampaign("Test name", "Body content", []string{"test@mail.com"})
+	mockCampaign, _ := campaign.NewCampaign(newCampaign.Name, newCampaign.Content, newCampaign.Emails, newCampaign.CreatedBy)
 	repository := new(internalmock.RepositoryMock)
 	service := campaign.Service{Repository: repository}
 	repository.On("GetBy", mock.Anything).Return(mockCampaign, nil)
@@ -174,7 +176,7 @@ func Test_Delete_ReturnsInternalError_when_delete_has_a_problem(t *testing.T) {
 
 func Test_Delete_ReturnsNil_on_delete_success(t *testing.T) {
 	assert := assert.New(t)
-	mockCampaign, _ := campaign.NewCampaign("Test name", "Body content", []string{"test@mail.com"})
+	mockCampaign, _ := campaign.NewCampaign(newCampaign.Name, newCampaign.Content, newCampaign.Emails, newCampaign.CreatedBy)
 	repository := new(internalmock.RepositoryMock)
 	service := campaign.Service{Repository: repository}
 	repository.On("GetBy", mock.Anything).Return(mockCampaign, nil)
